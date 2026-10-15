@@ -1,5 +1,5 @@
 /* Nährwert – Service Worker. Macht die App offline nutzbar. */
-var CACHE = "naehrwert-v2";
+var CACHE = "naehrwert-v3";
 var SHELL = [
   "./",
   "./index.html",

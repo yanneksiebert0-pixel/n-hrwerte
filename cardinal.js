@@ -22,14 +22,16 @@
     LS.setItem(KEY, JSON.stringify(c));
   }
 
-  // ?zentrale=…&schluessel=… übernehmen und aus der Adresse entfernen
+  // ?zentrale=… und #schluessel=… übernehmen und aus der Adresse entfernen.
+  // Der Schlüssel steht im #-Teil, weil der nie an den Webserver (GitHub) geschickt wird.
   (function () {
-    var u = new URL(location.href), z = u.searchParams.get("zentrale"), s = u.searchParams.get("schluessel");
+    var u = new URL(location.href), h = new URLSearchParams(u.hash.replace(/^#/, ""));
+    var z = u.searchParams.get("zentrale"), s = h.get("schluessel") || u.searchParams.get("schluessel");
     if (!z && !s) return;
-    if (z) setze({ url: z.replace(/\/+$/, ""), version: undefined, hash: undefined });
+    if (z && z.replace(/\/+$/, "") !== cfg().url) setze({ url: z.replace(/\/+$/, ""), version: undefined, hash: undefined });
     if (s) setze({ schluessel: s });
     u.searchParams.delete("zentrale"); u.searchParams.delete("schluessel");
-    history.replaceState(null, "", u.pathname + u.search + u.hash);
+    history.replaceState(null, "", u.pathname + u.search);
   })();
 
   var unterZentrale = /\/apps\/naehrwert\//.test(location.pathname);
