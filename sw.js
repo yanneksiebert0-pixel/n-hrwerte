@@ -1,9 +1,10 @@
 /* Nährwert – Service Worker. Macht die App offline nutzbar. */
-var CACHE = "naehrwert-v1";
+var CACHE = "naehrwert-v2";
 var SHELL = [
   "./",
   "./index.html",
   "./manifest.webmanifest",
+  "./cardinal.js",
   "./icon-192.png",
   "./icon-512.png",
   "./icon-180.png",
@@ -33,6 +34,8 @@ self.addEventListener("activate", function (e) {
 self.addEventListener("fetch", function (e) {
   var req = e.request;
   if (req.method !== "GET") return;
+  // eigene Adresse, aber außerhalb der App (z. B. /api/ der Zentrale): nicht zwischenspeichern
+  if (new URL(req.url).origin === location.origin && req.url.indexOf(self.registration.scope) !== 0) return;
 
   // App-Dateien + Google Fonts: aus dem Cache antworten, im Hintergrund erneuern.
   e.respondWith(
